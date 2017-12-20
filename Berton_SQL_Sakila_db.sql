@@ -1,4 +1,4 @@
-## SQL Queries 
+## SQL Homework 
 USE sakila;
 
 ## 1a. Display the first and last names of all actors from the table `actor`. 
@@ -115,9 +115,8 @@ WHERE  last_name = "WILLIAMS";
 
 ## 5a. You cannot locate the schema of the `address` table. Which query would you use to re-create it?
 
-SHOW COLUMNS FROM address;
-## Or, 
-DESCRIBE address;
+SHOW CREATE TABLE address;
+
 
 ## 6a. Use `JOIN` to display the first and last names, as well as the address, of each staff member. Use the tables `staff` and `address`
 
