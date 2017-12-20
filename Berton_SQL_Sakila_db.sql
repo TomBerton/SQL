@@ -134,7 +134,8 @@ SELECT SUM(amount) FROM payment
 WHERE payment_date LIKE '2005-08%';
 
 ## This gets the total from each staff member. The amounts should add up to the total from the above query. 
-SELECT s.first_name, s.last_name, p.staff_id, SUM(amount) AS Total
+
+SELECT s.first_name, s.last_name, p.staff_id, CONCAT("$",FORMAT(SUM(amount),2)) AS Total
 FROM staff AS s
 JOIN payment AS p
 ON (s.staff_id = p.staff_id) AND p.payment_date LIKE '2005-08%'
@@ -172,7 +173,7 @@ ORDER BY last_name ASC;
 
 ## Combining the two with 'JOIN'
 
-SELECT  c.first_name, c.last_name, SUM(p.amount) AS 'Total Amount Paid'
+SELECT  c.first_name, c.last_name, CONCAT("$",FORMAT(SUM(p.amount),2)) AS 'Total Amount Paid'
 FROM payment AS p
 JOIN customer AS c
 ON (p.customer_id =  c.customer_id)
@@ -245,5 +246,70 @@ ON (i.inventory_id = r.inventory_id)
 GROUP BY f.title
 ORDER BY COUNT(f.title) DESC;
 
+## 7f. Write a query to display how much business, in dollars, each store brought in.
+
+SELECT s.store_id, CONCAT("$",FORMAT(SUM(p.amount),2)) AS 'Money Made'
+FROM store AS s
+JOIN inventory AS i
+ON(i.store_id = s.store_id)
+JOIN rental AS r
+ON (r.inventory_id = i.inventory_id)
+JOIN payment AS p
+ON(p.rental_id = r.rental_id)
+GROUP BY s.store_id;
+
+## 7g. Write a query to display for each store its store ID, city, and country.
+
+SELECT s.store_id, city.city, country 
+FROM store AS s
+LEFT JOIN address AS a
+ON(a.address_id = s.address_id)
+INNER JOIN city
+ON (city.city_id = a.city_id)
+INNER JOIN country AS c
+ON(c.country_id = city.country_id)
+GROUP BY s.store_id;
+
+## 7h. List the top five genres in gross revenue in descending order. 
+## (**Hint**: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
+
+SELECT cat.name AS 'Film Genre', CONCAT("$",FORMAT(SUM(p.amount),2)) AS 'Gross Revenue'
+FROM category AS cat
+JOIN film_category AS fc
+ON(fc.category_id = cat.category_id)
+JOIN inventory AS i
+ON (i.film_id = fc.film_id)
+JOIN rental AS r
+ON(r.inventory_id = i.inventory_id)
+JOIN payment AS p
+ON(p.rental_id = r.rental_id)
+GROUP BY cat.name
+ORDER BY SUM(p.amount) DESC
+LIMIT 5;
+
+## 8a. In your new role as an executive, you would like to have an easy way of viewing the Top five genres by gross revenue. 
+## Use the solution from the problem above to create a view. 
+## If you haven't solved 7h, you can substitute another query to create a view.
+
+CREATE VIEW top_five_genres AS
+SELECT cat.name AS 'Film Genre', CONCAT("$",FORMAT(SUM(p.amount),2)) AS 'Gross Revenue'
+	FROM category AS cat
+    JOIN film_category AS fc
+    ON(fc.category_id = cat.category_id)
+    JOIN inventory AS i
+	ON (i.film_id = fc.film_id)
+	JOIN rental AS r
+	ON(r.inventory_id = i.inventory_id)
+	JOIN payment AS p
+	ON(p.rental_id = r.rental_id)
+	GROUP BY cat.name
+	ORDER BY SUM(p.amount) DESC
+    LIMIT 5;
 
 
+## 8b. How would you display the view that you created in 8a?
+ SELECT * FROM top_five_genres;
+ 
+## 8c. You find that you no longer need the view `top_five_genres`. Write a query to delete it.
+
+DROP VIEW top_five_genres;
