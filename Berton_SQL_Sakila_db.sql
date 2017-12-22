@@ -1,6 +1,7 @@
 ## SQL Homework 
 USE sakila;
 
+
 ## 1a. Display the first and last names of all actors from the table `actor`. 
 
 SELECT first_name, last_name
@@ -76,7 +77,7 @@ GROUP BY last_name;
 SELECT last_name, COUNT(*) AS COUNT
 FROM actor
 GROUP BY last_name
-HAVING COUNT = 2;
+HAVING COUNT >= 2;
 
 ## 4c. Oh, no! The actor `HARPO WILLIAMS` was accidentally entered in the `actor` table as `GROUCHO WILLIAMS`, 
 ## the name of Harpo's second cousin's husband's yoga teacher. Write a query to fix the record,
@@ -88,6 +89,7 @@ UPDATE actor SET first_name = REPLACE(first_name, 'GROUCHO','HARPO');
 
 SELECT * FROM actor
 WHERE first_name = "GROUCHO";
+
 
 ## Check to  see the change 
 SELECT * FROM actor
@@ -105,13 +107,17 @@ UPDATE actor SET first_name = REPLACE(first_name,'HARPO', 'GROUCHO');
 SELECT * FROM actor
 WHERE first_name = "GROUCHO";
 
-UPDATE actor SET first_name = REPLACE(first_name, 'GROUCHO', 'MUCHO GROUCHO')
-WHERE last_name = "WILLIAMS";
+##UPDATE actor SET first_name = REPLACE(first_name, 'MUCHO MUCHO MUCHO GROUCHO', 'GROUCHO')
+##WHERE last_name = "WILLIAMS";
+##UPDATE actor SET first_name = REPLACE(first_name, 'GROUCHO', 'HARPO')
+##WHERE last_name = "WILLIAMS";
+
 
 ## Check to  see the change 
 
 SELECT * FROM actor
 WHERE  last_name = "WILLIAMS";
+
 
 ## 5a. You cannot locate the schema of the `address` table. Which query would you use to re-create it?
 
@@ -129,7 +135,7 @@ ON (s.address_id = a.address_id);
 ## 6b. Use `JOIN` to display the total amount rung up by each staff member in August of 2005. Use tables `staff` and `payment`.
 
 ## This gets the total amount for August 2005.
-SELECT SUM(amount) FROM payment
+SELECT CONCAT("$",FORMAT(SUM(amount),2)) AS Total FROM payment
 WHERE payment_date LIKE '2005-08%';
 
 ## This gets the total from each staff member. The amounts should add up to the total from the above query. 
